@@ -30,6 +30,7 @@ export default async function ClaimDetailPage({
           ← 클레임 목록
         </Link>
         <span className="text-yellow-500 font-bold text-lg">클레미</span>
+        <span className="text-sm text-gray-500">AI 원인 분석 및 해야 할 일</span>
       </header>
 
       <main className="p-6 max-w-2xl mx-auto space-y-4">

@@ -5,3 +5,6 @@
 .idea/
 .vscode/
 *.iml
+
+# Local package cache
+frontend/.npm-cache/
