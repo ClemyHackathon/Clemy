@@ -1,8 +1,11 @@
 package com.clemy.ai
 
 import com.clemy.claim.ClaimAnalysisResult
+import com.clemy.claim.RootCauseCandidate
+import com.clemy.claim.Recommendation
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -13,10 +16,10 @@ class GeminiService(
     @Value("\${gemini.api-key}") private val apiKey: String,
     @Value("\${gemini.model}") private val model: String
 ) {
+    private val log = LoggerFactory.getLogger(GeminiService::class.java)
     private val client = WebClient.builder()
         .baseUrl("https://generativelanguage.googleapis.com/v1beta")
         .build()
-
     private val mapper = jacksonObjectMapper()
 
     fun analyzeClaim(
@@ -60,11 +63,17 @@ class GeminiService(
             "generationConfig" to mapOf("responseMimeType" to "application/json")
         )
 
-        val text = callWithRetry(body)
-        return mapper.readValue(text)
+        return try {
+            val text = callWithRetry(body)
+            mapper.readValue(text)
+        } catch (e: Exception) {
+            log.warn("Gemini API 호출 실패 (${e.javaClass.simpleName}): ${e.message}. fallback 결과를 반환합니다.")
+            fallbackResult(rawText)
+        }
     }
 
-    private fun callWithRetry(body: Map<String, Any>, maxRetries: Int = 3): String {
+    private fun callWithRetry(body: Map<String, Any>, maxRetries: Int = 2): String {
+        var lastException: Exception? = null
         repeat(maxRetries) { attempt ->
             try {
                 val response = client.post()
@@ -75,12 +84,31 @@ class GeminiService(
                     .block()
                 return extractText(response)
             } catch (e: WebClientResponseException.TooManyRequests) {
-                if (attempt == maxRetries - 1) throw e
-                Thread.sleep((attempt + 1) * 60_000L) // 60s, 120s
+                lastException = e
+                if (attempt < maxRetries - 1) {
+                    log.warn("Gemini 429 — {}초 후 재시도 ({}/{})", 60, attempt + 1, maxRetries)
+                    Thread.sleep(60_000L)
+                }
+            } catch (e: WebClientResponseException) {
+                // 403, 404 등 재시도해도 소용없는 오류는 즉시 throw
+                throw e
             }
         }
-        throw IllegalStateException("Gemini API 재시도 초과")
+        throw lastException ?: IllegalStateException("Gemini 재시도 초과")
     }
+
+    private fun fallbackResult(rawText: String) = ClaimAnalysisResult(
+        claimType = "기타",
+        severity = "중간",
+        rootCauseCandidates = listOf(
+            RootCauseCandidate(1, "AI 분석 일시 불가 — 수동 검토 필요", "낮음")
+        ),
+        recommendations = listOf(
+            Recommendation("즉시: 담당자가 직접 현장 확인 후 원인 분류", 1)
+        ),
+        isRepeated = false,
+        aiSummary = "AI 분석을 일시적으로 사용할 수 없습니다. 접수는 정상 처리됐습니다."
+    )
 
     private fun extractText(response: Map<*, *>?): String {
         val candidates = response?.get("candidates") as? List<*>

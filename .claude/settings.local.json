@@ -56,7 +56,8 @@
       "Bash(echo \"Backend PID: $!\")",
       "Bash(lsof -nP -i:3001)",
       "Bash(lsof -nP -i:8080)",
-      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'클레임 총 {d[\\\\\"total\\\\\"]}개'\\)\")"
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\(f'클레임 총 {d[\\\\\"total\\\\\"]}개'\\)\")",
+      "Bash(wait)"
     ]
   }
 }
