@@ -55,4 +55,10 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  @media (max-width: 767px) {
+    body {
+      background: #f2f2f2;
+    }
+  }
 }

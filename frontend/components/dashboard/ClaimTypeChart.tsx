@@ -11,11 +11,11 @@ import {
 } from "recharts";
 
 const TYPE_COLORS: Record<string, string> = {
-  소음: "#3B82F6",
-  냄새: "#22C55E",
-  진동: "#F97316",
+  소음: "#0891B2",
+  냄새: "#10B981",
+  진동: "#64748B",
   품질불량: "#EF4444",
-  납품지연: "#A855F7",
+  납품지연: "#6366F1",
   기타: "#9CA3AF",
 };
 
