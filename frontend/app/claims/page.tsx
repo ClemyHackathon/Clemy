@@ -17,10 +17,11 @@ export default async function ClaimsPage({
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white border-b px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <Link href="/dashboard/cs" className="text-sm text-gray-500 hover:text-gray-800">
-            ← 대시보드
+          <Link href="/" className="text-sm text-gray-500 hover:text-gray-800">
+            ← 역할 선택
           </Link>
           <span className="text-yellow-500 font-bold text-lg">클레미</span>
+          <span className="text-sm text-gray-500">클레임 요청자 게시판</span>
         </div>
         <Link href="/claims/new">
           <Button className="bg-yellow-400 hover:bg-yellow-500 text-black text-sm">
