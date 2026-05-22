@@ -29,7 +29,7 @@ export default async function ClaimDetailPage({
         <Link href="/claims" className="text-sm text-gray-500 hover:text-gray-800">
           ← 클레임 목록
         </Link>
-        <span className="text-yellow-500 font-bold text-lg">클레미</span>
+        <span className="text-yellow-500 font-bold text-lg">Clemy</span>
         <span className="text-sm text-gray-500">AI 원인 분석 및 해야 할 일</span>
       </header>
 

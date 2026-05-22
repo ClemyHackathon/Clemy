@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft } from "lucide-react";
 import { getDashboard, getClaims } from "@/lib/api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -55,34 +56,41 @@ export default async function CsDashboardPage() {
     .slice(0, 5);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="text-yellow-500 font-bold text-xl">클레미</span>
-          <span className="text-sm text-gray-500">산업현장 관리자 대시보드</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <Link href="/">
-            <Button variant="outline" className="text-sm">
-              역할 선택
-            </Button>
+    <div className="min-h-screen bg-[#f2f2f2] md:bg-white">
+      <header className="sticky top-0 z-20 border-b border-gray-100 bg-white/95 px-4 py-3 backdrop-blur">
+        <div className="mx-auto flex max-w-5xl items-center gap-3">
+          <Link
+            href="/"
+            className="flex h-9 w-9 items-center justify-center rounded-md border border-gray-200 text-gray-600 transition hover:bg-gray-50"
+            aria-label="역할 선택으로 이동"
+          >
+            <ChevronLeft className="h-5 w-5" aria-hidden="true" />
           </Link>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-cyan-600">Clemy</p>
+            <h1 className="truncate text-lg font-bold text-gray-950">산업현장 관리자 대시보드</h1>
+          </div>
           <Link href="/claims">
-            <Button className="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold">
-              클레임 게시판
+            <Button className="h-9 rounded-md bg-gray-950 px-3 text-sm font-semibold text-white hover:bg-gray-800">
+              게시판
             </Button>
           </Link>
         </div>
       </header>
 
-      <main className="p-6 space-y-6 max-w-5xl mx-auto">
+      <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
+        <div>
+          <p className="text-xs font-semibold text-cyan-600">ADMIN DASHBOARD</p>
+          <h2 className="mt-1 text-2xl font-bold text-gray-950">클레임 현황</h2>
+        </div>
+
         {stats && <StatsCards stats={stats} />}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {stats && (
-            <Card>
+            <Card className="rounded-md border border-gray-200 bg-white ring-0">
               <CardHeader>
-                <CardTitle className="text-base">클레임 유형 분석</CardTitle>
+                <CardTitle className="text-lg font-bold text-gray-950">클레임 유형 분석</CardTitle>
               </CardHeader>
               <CardContent>
                 <ClaimTypeChart data={stats.byType} />
@@ -90,21 +98,21 @@ export default async function CsDashboardPage() {
             </Card>
           )}
 
-          <Card>
+          <Card className="rounded-md border border-gray-200 bg-white ring-0">
             <CardHeader>
-              <CardTitle className="text-base">원인 후보 분석</CardTitle>
+              <CardTitle className="text-lg font-bold text-gray-950">원인 후보 분석</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {rootCauses.length === 0 ? (
                 <p className="text-sm text-gray-400 text-center py-8">분석된 원인 후보가 없습니다.</p>
               ) : (
                 rootCauses.map((item, index) => (
-                  <div key={item.cause} className="rounded-md border bg-white px-3 py-2">
+                  <div key={item.cause} className="rounded-md border border-gray-200 bg-white px-3 py-3">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-sm font-medium text-gray-800">
+                      <p className="text-sm font-semibold text-gray-800">
                         {index + 1}. {item.cause}
                       </p>
-                      <span className="shrink-0 text-xs font-semibold text-yellow-700">
+                      <span className="shrink-0 text-xs font-semibold text-cyan-600">
                         {item.count}건
                       </span>
                     </div>
@@ -117,10 +125,10 @@ export default async function CsDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="rounded-md border border-gray-200 bg-white ring-0">
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-base">대응 우선순위 지정</CardTitle>
-              <Link href="/claims" className="text-xs text-yellow-600 hover:underline">
+              <CardTitle className="text-lg font-bold text-gray-950">대응 우선순위 지정</CardTitle>
+              <Link href="/claims" className="text-xs font-semibold text-cyan-600 hover:underline">
                 전체 보기
               </Link>
             </CardHeader>
@@ -132,7 +140,7 @@ export default async function CsDashboardPage() {
                   <Link
                     key={claim.id}
                     href={`/claims/${claim.id}`}
-                    className="block rounded-md border bg-white px-3 py-2 transition hover:border-yellow-300 hover:shadow-sm"
+                    className="block rounded-md border border-gray-200 bg-white px-3 py-3 transition hover:border-cyan-200 hover:bg-cyan-50/30"
                   >
                     <div className="mb-2 flex items-center justify-between gap-2">
                       <span className="text-xs font-semibold text-gray-500">#{index + 1}</span>
@@ -151,20 +159,22 @@ export default async function CsDashboardPage() {
           </Card>
         </div>
 
-        <Card>
+        <Card className="rounded-md border border-gray-200 bg-white ring-0">
           <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle className="text-base">최근 접수 클레임</CardTitle>
-            <Link href="/claims" className="text-xs text-yellow-600 hover:underline">
+            <CardTitle className="text-lg font-bold text-gray-950">최근 접수 클레임</CardTitle>
+            <Link href="/claims" className="text-xs font-semibold text-cyan-600 hover:underline">
               게시판으로 이동
             </Link>
           </CardHeader>
-          <CardContent className="space-y-2">
+          <CardContent>
             {recentClaims.length === 0 ? (
               <p className="text-sm text-gray-400 text-center py-4">클레임이 없습니다.</p>
             ) : (
-              recentClaims.map((claim) => (
-                <ClaimCard key={claim.id} claim={claim} />
-              ))
+              <div className="divide-y divide-gray-100 border-y border-gray-100">
+                {recentClaims.map((claim) => (
+                  <ClaimCard key={claim.id} claim={claim} />
+                ))}
+              </div>
             )}
           </CardContent>
         </Card>
